@@ -1,0 +1,80 @@
+"""
+【腐烂的橘子 - BFS多源广度优先搜索】
+
+思路（简洁）：
+所有初始腐烂橘子同时作为起点进行BFS，每分钟向外扩展一圈。
+统计新鲜橘子数量 fresh，每感染一个新鲜橘子 fresh--，同时记录分钟数。
+若最终 fresh > 0 则返回 -1，否则返回分钟数。
+
+易错点：
+1. 使用队列存储当前分钟所有腐烂橘子的坐标，每分钟处理一层。
+2. 感染后立即将 grid 改为 2，避免重复感染。
+3. 若初始没有新鲜橘子，直接返回 0（代码中 ans 初始 0，while 条件 fresh 为 0 时不执行，返回 0）。
+4. 二维数组的行列下标判断要正确。
+
+时空复杂度：
+- 时间复杂度 O(m*n)，每个格子最多入队一次
+- 空间复杂度 O(m*n)，队列最坏情况
+
+输入输出示例：
+示例 1：
+输入: [[2,1,1],[1,1,0],[0,1,1]]
+输出: 4
+
+示例 2：
+输入: [[2,1,1],[0,1,1],[1,0,1]]
+输出: -1
+
+示例 3：
+输入: [[0,2]]
+输出: 0
+"""
+
+import sys
+import json
+from typing import List
+
+class Solution:
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+        fresh = 0
+        q = []          # 队列，存储当前腐烂橘子的坐标 [i, j]
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == 1:
+                    fresh += 1
+                elif grid[i][j] == 2:
+                    q.append([i, j])
+        
+        ans = 0
+        # 当有新鲜橘子且队列不为空时继续
+        while q and fresh:
+            tmp = q
+            q = []          # 下一层队列
+            ans += 1
+            for i, j in tmp:
+                for x, y in ((i-1, j), (i+1, j), (i, j-1), (i, j+1)):
+                    if 0 <= x < m and 0 <= y < n and grid[x][y] == 1:
+                        fresh -= 1
+                        grid[x][y] = 2
+                        q.append([x, y])
+        
+        return -1 if fresh else ans
+
+
+def main():
+    data = sys.stdin.read().strip()
+    if not data:
+        return
+    # 输入为二维 JSON 数组
+    try:
+        grid = json.loads(data)
+    except:
+        # 若解析失败，可尝试其他格式，但通常题目给 JSON
+        return
+    sol = Solution()
+    print(sol.orangesRotting(grid))
+
+
+if __name__ == "__main__":
+    main()
