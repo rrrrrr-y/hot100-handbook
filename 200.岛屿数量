@@ -1,0 +1,68 @@
+"""
+【岛屿数量 - DFS深度优先搜索】
+
+思路（简洁）：
+遍历每个格子，遇到 '1' 则启动DFS将其所在整个岛屿标记为 '2'（已访问），
+岛屿计数加1。DFS递归访问上下左右，越界或非 '1' 则返回。
+
+易错点：
+1. 使用 '2' 标记已访问，避免重复计数，也可直接改为 '0'。
+2. 递归DFS深度可能较大，但通常网格规模可接受。
+3. 修改原网格，若需保留原数据可额外建 visited 数组。
+4. 输入为二维字符数组，元素为字符串 '1' / '0'。
+
+时空复杂度：
+- 时间复杂度 O(m*n)，每个格子访问常数次
+- 空间复杂度 O(m*n)，递归栈最坏情况
+
+输入输出示例：
+示例 1：
+输入: [["1","1","1","1","0"],["1","1","0","1","0"],["1","1","0","0","0"],["0","0","0","0","0"]]
+输出: 1
+
+示例 2：
+输入: [["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]]
+输出: 3
+"""
+
+import sys
+import json
+from typing import List
+
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int:
+        m, n = len(grid), len(grid[0])
+        def dfs(i: int, j: int) -> None:
+            if i < 0 or i >= m or j < 0 or j >= n or grid[i][j] != '1':
+                return
+            grid[i][j] = '2'          # 标记已访问
+            dfs(i - 1, j)
+            dfs(i + 1, j)
+            dfs(i, j - 1)
+            dfs(i, j + 1)
+        
+        ans = 0
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == '1':
+                    dfs(i, j)
+                    ans += 1
+        return ans
+
+
+def main():
+    data = sys.stdin.read().strip()
+    if not data:
+        return
+    # 输入为二维 JSON 数组
+    try:
+        grid = json.loads(data)
+    except:
+        # 若解析失败，则直接返回（可自行扩展其他格式）
+        return
+    sol = Solution()
+    print(sol.numIslands(grid))
+
+
+if __name__ == "__main__":
+    main()
