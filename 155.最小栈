@@ -1,0 +1,71 @@
+# 栈，辅助栈
+# 最小值重复
+# 验证格式：
+          # 输入：
+          #  ["MinStack","push","push","push","getMin","pop","top","getMin"]
+          #  [[],[-2],[0],[-3],[],[],[],[]]
+          #  输出：
+          #  -3
+          #  0
+          #  -2
+
+import sys
+import json
+
+class MinStack:
+    def __init__(self):
+        self.stack = []
+        self.min_stack = []
+
+    def push(self, x: int) -> None:
+        self.stack.append(x)
+        if not self.min_stack or x <= self.min_stack[-1]:
+            self.min_stack.append(x)
+
+    def pop(self) -> None:
+        if self.stack.pop() == self.min_stack[-1]:
+            self.min_stack.pop()
+
+    def top(self) -> int:
+        return self.stack[-1]
+
+    def getMin(self) -> int:
+        return self.min_stack[-1]
+
+
+def main():
+    # 1. 读取所有输入
+    content = sys.stdin.read().strip()
+    if not content:
+        return
+
+    # 2. 按行分割（第一行是 commands，第二行是 args）
+    lines = content.splitlines()
+    if len(lines) < 2:
+        return
+
+    # 3. 解析 JSON 数组
+    commands = json.loads(lines[0])   # ["MinStack","push","push",...]
+    args = json.loads(lines[1])       # [[],[-2],[0],...]
+
+    obj = None
+    output = []
+
+    # 4. 逐个执行命令
+    for cmd, arg in zip(commands, args):
+        if cmd == "MinStack":
+            obj = MinStack()
+        elif cmd == "push":
+            obj.push(arg[0])
+        elif cmd == "pop":
+            obj.pop()
+        elif cmd == "top":
+            output.append(str(obj.top()))
+        elif cmd == "getMin":
+            output.append(str(obj.getMin()))
+
+    # 5. 输出结果（每个结果占一行）
+    print("\n".join(output))
+
+if __name__ == "__main__":
+    main()
