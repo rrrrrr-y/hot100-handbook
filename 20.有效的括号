@@ -1,7 +1,22 @@
+"""
+【有效的括号 - 栈 + 哈希表】
+【思路】：
+遍历字符串，左括号入栈，右括号判断栈顶是否匹配。
+不匹配则返回 False，最后栈空则合法。
+【易错点】：
+1. 奇数长度直接返回 False（剪枝）。
+2. 遇到右括号时，必须先检查栈是否为空。
+3. 哈希表映射左括号到右括号，便于匹配。
+【时空复杂度】：
+- 时间 O(n)，空间 O(n)
+【输入输出示例】：
+示例 1：
+输入: "()"
+输出: true
+"""
+
 import sys
-# 哈希表映射
-# 栈的后进先出
-# 奇数长度预先判断
+
 class Solution:
     def isValid(self, s: str) -> bool:
         if len(s) % 2 == 1:
@@ -21,7 +36,7 @@ def main():
     data = sys.stdin.read().strip().split()
     if not data:
         return
-    s = data[0]  # 取第一个字符串 #这里一定不能出错 #如果不是[0]那么就是列表而不是列表的第一个元素
+    s = data[0]  # 取第一个字符串
     sol = Solution()
     print("true" if sol.isValid(s) else "false")
 
