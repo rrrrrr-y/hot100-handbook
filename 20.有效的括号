@@ -1,1 +1,29 @@
+import sys
+# 哈希表映射
+# 栈的后进先出
+# 奇数长度预先判断
+class Solution:
+    def isValid(self, s: str) -> bool:
+        if len(s) % 2 == 1:
+            return False
+        dic = {'{': '}', '[': ']', '(': ')'}
+        stack = []
+        for ch in s:
+            if ch in dic:          # 左括号：入栈
+                stack.append(ch)
+            else:                  # 右括号：必须匹配栈顶
+                if not stack or dic[stack.pop()] != ch:
+                    return False
+        return not stack           # 最后栈必须为空
 
+def main():
+    # ACM 输入：通常是一行一个字符串
+    data = sys.stdin.read().strip().split()
+    if not data:
+        return
+    s = data[0]  # 取第一个字符串 #这里一定不能出错 #如果不是[0]那么就是列表而不是列表的第一个元素
+    sol = Solution()
+    print("true" if sol.isValid(s) else "false")
+
+if __name__ == "__main__":
+    main()
