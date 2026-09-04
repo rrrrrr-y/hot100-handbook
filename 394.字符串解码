@@ -1,0 +1,55 @@
+"""
+【思路】
+使用栈来模拟解码过程：
+- 遍历字符串 s 的每个字符 ch
+- 当遇到数字时，累积计算多位数（multi = multi * 10 + int(ch)）
+- 当遇到 '[' 时，将当前累积的 multi 和之前的字符串 res 压入栈，并重置 multi 和 res
+- 当遇到 ']' 时，弹出栈顶的 (cur_multi, last_res)，将当前 res 重复 cur_multi 次并拼接到 last_res 后面
+- 当遇到普通字母时，直接拼接到 res
+
+这样最终 res 即为解码后的字符串。
+
+【易错点】
+1. 数字可能是多位（如 "100[abc]"），需要连续读取数字字符并计算 multi。
+2. 嵌套情况（如 "3[a2[c]]"）：需要正确处理栈的进出顺序，每次遇到 '[' 时保存当前状态，遇到 ']' 时恢复上一层状态。
+3. 注意 Python 中字符串乘法：cur_multi * res 表示重复 cur_multi 次。
+4. 输入可能包含空格？题目通常没有，但使用 strip() 去除首尾空白，避免影响。
+5. 如果输入为空字符串，应直接输出空（即不输出任何内容或换行），代码中判断若 s 为空则直接返回，避免无输出。
+
+【时空复杂度】
+- 时间复杂度：O(n)，n 为字符串长度，每个字符最多入栈出栈一次。
+- 空间复杂度：O(n)，栈的最大深度与嵌套层数相关，最坏情况下为 n。
+"""
+
+import sys
+
+class Solution:
+    def decodeString(self, s: str) -> str:
+        stack = []          # 存储 [multi, res] 对
+        multi = 0
+        res = ''
+        for ch in s:
+            if ch == '[':
+                stack.append([multi, res])
+                multi, res = 0, ''
+            elif ch == ']':
+                cur_multi, last_res = stack.pop()
+                res = last_res + cur_multi * res
+            elif ch.isdigit():
+                multi = multi * 10 + int(ch)
+            else:
+                res += ch
+        return res
+
+
+def main():
+    # 读取输入（一行字符串）
+    s = sys.stdin.read().strip()
+    if not s:
+        return
+    sol = Solution()
+    print(sol.decodeString(s))
+
+
+if __name__ == "__main__":
+    main()
