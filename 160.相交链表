@@ -1,0 +1,127 @@
+"""
+【相交链表 - 双指针】
+
+思路（简洁）：
+两个指针分别从 headA 和 headB 出发，遍历完当前链表后切换到另一个链表继续。
+若相交，则会在相交节点相遇；若不相交，最终都会变为 null 并同时结束。
+
+易错点：
+1. 循环条件 while A != B，注意 A 和 B 同时为 None 时也会退出，返回 None。
+2. 切换时注意：A = A.next if A else headB，而不是直接 A = headB（会导致死循环）。
+3. 链表可能为空，需正确处理。
+
+时空复杂度：
+- 时间复杂度 O(m+n)
+- 空间复杂度 O(1)
+
+输入输出示例：
+示例 1（相交）：
+输入:
+[1,2,3,4,5]
+[6,7,8]
+3
+输出: 4
+
+解释：链表 A: 1->2->3->4->5，链表 B 独立部分 6->7->8 连接到 A 的索引3（节点4），相交节点值为4。
+
+示例 2（不相交）：
+输入:
+[1,2,3]
+[4,5,6]
+-1
+输出: null
+"""
+
+import sys
+import json
+from typing import Optional, List
+
+# 链表节点定义
+class ListNode:
+    def __init__(self, x: int):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:
+        A = headA
+        B = headB
+        while A != B:
+            A = A.next if A else headB
+            B = B.next if B else headA
+        return A
+
+
+def build_linked_list(vals: List[int]) -> Optional[ListNode]:
+    """根据值列表构建链表，返回头节点"""
+    if not vals:
+        return None
+    head = ListNode(vals[0])
+    cur = head
+    for v in vals[1:]:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return head
+
+def get_node_at_index(head: ListNode, idx: int) -> Optional[ListNode]:
+    """返回链表中第 idx 个节点（从0开始）"""
+    cur = head
+    for _ in range(idx):
+        if not cur:
+            return None
+        cur = cur.next
+    return cur
+
+def main():
+    # 读取全部输入（按行）
+    lines = sys.stdin.read().strip().splitlines()
+    if len(lines) < 3:
+        return
+
+    try:
+        a_vals = json.loads(lines[0].strip())
+        b_vals = json.loads(lines[1].strip())   # B 的独立部分（不包含相交节点及其后）
+        idxA = json.loads(lines[2].strip())     # 相交节点在 A 中的索引（0-based），-1 表示不相交
+    except:
+        # 解析失败则直接返回
+        return
+
+    # 构建链表 A
+    headA = build_linked_list(a_vals)
+
+    # 构建链表 B
+    if idxA >= 0:
+        # 有相交
+        # 构建 B 的前段（独立部分）
+        headB = build_linked_list(b_vals)
+        # 找到 A 中的相交节点
+        intersect_node = get_node_at_index(headA, idxA)
+        if not intersect_node:
+            # 索引无效，直接返回
+            print("null")
+            return
+        if headB:
+            # B 非空，将尾节点指向相交节点
+            cur = headB
+            while cur.next:
+                cur = cur.next
+            cur.next = intersect_node
+        else:
+            # B 为空，则头节点直接指向相交节点
+            headB = intersect_node
+    else:
+        # 不相交，B 独立
+        headB = build_linked_list(b_vals)
+
+    # 调用函数求解
+    sol = Solution()
+    result = sol.getIntersectionNode(headA, headB)
+
+    # 输出结果
+    if result:
+        print(result.val)
+    else:
+        print("null")
+
+if __name__ == "__main__":
+    main()
