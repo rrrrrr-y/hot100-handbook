@@ -1,0 +1,54 @@
+"""
+【每日温度 - 单调栈解法】
+
+【思路（简洁）】：
+从右向左遍历温度，维护一个单调递减栈（存下标），栈中温度依次递减。
+对于当前温度 t：
+- 弹出栈顶所有 <= t 的下标（因为它们对当前元素不可能是“下一个更高温度”）
+- 若栈不为空，栈顶就是最近的大于 t 的温度下标，答案 = 栈顶 - 当前下标
+- 将当前下标入栈
+【易错点】：
+1. 栈中存的是下标，比较时用 temperatures[st[-1]] 取值。
+2. 使用 >= 弹出，确保严格递减（若相等也弹出，因为相等的温度不是“更高”）。
+3. 从右向左遍历时，ans 初始为 0，若没有更大温度则保持 0。
+【时空复杂度】：
+- 时间复杂度：O(n)，每个元素最多入栈出栈一次
+- 空间复杂度：O(n)，栈空间
+"""
+
+import sys
+import json
+from typing import List
+
+class Solution:
+    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
+        n = len(temperatures)
+        st = []          # 单调递减栈，存下标
+        ans = [0] * n
+        for i in range(n - 1, -1, -1):
+            t = temperatures[i]
+            while st and t >= temperatures[st[-1]]:
+                st.pop()
+            if st:
+                ans[i] = st[-1] - i
+            st.append(i)
+        return ans
+
+
+def main():
+    # 读取输入，格式为 JSON 数组，如 [73,74,75,71,69,72,76,73]
+    data = sys.stdin.read().strip()
+    if not data:
+        return
+    try:
+        temps = json.loads(data)
+    except:
+        # 若解析失败，可尝试空格分隔方式（但题目通常给JSON，此处兼容）
+        temps = list(map(int, data.split()))
+    sol = Solution()
+    result = sol.dailyTemperatures(temps)
+    # 输出 JSON 数组格式（标准输出）
+    print(json.dumps(result))
+
+if __name__ == "__main__":
+    main()
