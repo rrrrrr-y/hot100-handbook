@@ -1,0 +1,75 @@
+一、ACM 格式核心概念
+输入：通过标准输入（stdin）读取数据，通常用 sys.stdin。
+
+输出：通过标准输出（stdout）打印结果，用 print()。
+
+格式：不关心输入是空格还是换行，全部按空白分隔符（空格、换行、Tab）提取 token。
+
+二、最常用的读取方式（sys.stdin.read()）
+1. 最基本的写法（全量读取 + 分割）
+python
+import sys
+data = sys.stdin.read().split()   # 获取所有 token 的列表
+这里 split() 默认按任意空白字符分割，自动忽略首尾空白，所以无需先 .strip()。
+
+2. 带 .strip() 的写法（你提到的）
+python
+data = sys.stdin.read().strip().split()
+先去除首尾空白字符，再分割。
+
+效果完全等价于直接 .split()，因为 split() 本身就会忽略首尾空白。
+但在一些教材或老代码中常见，认为更保险（尤其是处理纯文本，如 "abc\n" 时，strip() 会去掉末尾换行，但 split() 也能做到）。
+建议：用 .split() 就够了，简洁；如果你习惯加 .strip() 也完全没问题。
+
+3. 按行读取（splitlines()）
+python
+lines = sys.stdin.read().strip().splitlines()
+保留换行分割，得到每一行的字符串列表，常用于需要区分行的场景。
+
+三、根据输入格式选择具体用法
+类型 A：输入是单一 JSON 数据（数组、矩阵、字符串）
+题目：每日温度、柱状图最大矩形、反转链表、岛屿数量、腐烂的橘子、解码字符串
+写法：
+
+python
+data = sys.stdin.read().strip()
+if not data: return
+params = json.loads(data)   # 直接解析为 Python 对象
+优点：最简单，无需关心 token 分割。
+
+类型 B：输入是多行，每行是独立参数（数组、数字等）
+题目：两数之和、寻找中位数、相交链表
+写法：
+
+python
+lines = sys.stdin.read().strip().splitlines()
+arr1 = json.loads(lines[0])
+arr2 = json.loads(lines[1])
+target = int(lines[2]) if len(lines) > 2 else None
+或者用 split() 统一取 token：
+
+python
+tokens = sys.stdin.read().split()
+arr = json.loads(tokens[0])
+target = int(tokens[1])
+类型 C：输入为简单空格分隔的数字/字符串（无 JSON）
+题目：经典 A + B，或只给一个字符串（如“()”）
+写法：
+
+python
+data = sys.stdin.read().split()
+s = data[0]          # 字符串
+n = int(data[1])     # 数字
+类型 D：先给个数，再给数据（老派 OJ）
+题目：较少出现，但需知道
+写法：
+
+python
+tokens = sys.stdin.read().split()
+n = int(tokens[0])
+arr = list(map(int, tokens[1:1+n]))
+四、输出格式
+一般用 print() 即可，它会自动加换行。
+
+若输出为数组、列表，建议用 json.dumps() 转换为标准 JSON 字符串，保持与输入对称。
+例如：print(json.dumps(result))
