@@ -1,0 +1,61 @@
+"""
+【买卖股票的最佳时机 - 一次遍历】
+
+思路（简洁）：
+遍历价格数组，维护历史最低价格 min_price，并计算以当天价格卖出能获得的利润 price - min_price，
+更新最大利润 ans。
+
+易错点：
+1. 初始 min_price 设为无穷大（float('inf')），确保第一个价格能被更新。
+2. 若 price < min_price，更新 min_price；否则计算利润。
+3. 利润至少为0，因此 ans 初始为0。
+4. 若价格递减，ans 保持0。
+
+时空复杂度：
+- 时间 O(n)，一次遍历
+- 空间 O(1)
+
+输入输出示例：
+示例 1：
+输入: [7,1,5,3,6,4]
+输出: 5
+
+示例 2：
+输入: [7,6,4,3,1]
+输出: 0
+
+示例 3：
+输入: [1,2]
+输出: 1
+"""
+
+import sys
+import json
+from typing import List
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        min_price = float('inf')
+        ans = 0
+        for price in prices:
+            if price < min_price:
+                min_price = price
+            else:
+                profit = price - min_price
+                if profit > ans:
+                    ans = profit
+        return ans
+
+def main():
+    data = sys.stdin.read().strip()
+    if not data:
+        return
+    try:
+        prices = json.loads(data)
+    except:
+        prices = list(map(int, data.split()))
+    sol = Solution()
+    print(sol.maxProfit(prices))
+
+if __name__ == "__main__":
+    main()
