@@ -1,0 +1,53 @@
+"""
+【两数之和 - 哈希表】
+
+思路（简洁）：
+遍历数组，用哈希表记录已遍历数字的下标，每次检查 target - 当前值 是否在表中。
+
+易错点：
+1. 先判断再插入，避免重复使用同一个元素。
+2. 题目保证有唯一解，直接返回。
+
+时空复杂度：
+- 时间 O(n)，空间 O(n)
+
+输入输出示例：
+示例 1：
+输入: [2,7,11,15] 9
+输出: [0,1]
+
+示例 2：
+输入: [3,2,4] 6
+输出: [1,2]
+
+示例 3：
+输入: [3,3] 6
+输出: [0,1]
+"""
+
+import sys
+import json
+from typing import List
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        mp = {}
+        for i, x in enumerate(nums):
+            if target - x in mp:
+                return [mp[target - x], i]
+            mp[x] = i
+        return []
+
+def main():
+    # 读取所有输入（支持同一行或两行），按空格分割
+    data = sys.stdin.read().split()
+    if len(data) < 2:
+        return
+    nums = json.loads(data[0])   # 第一个 token 是数组
+    target = int(data[1])        # 第二个 token 是目标值
+    sol = Solution()
+    result = sol.twoSum(nums, target)
+    print(json.dumps(result))
+
+if __name__ == "__main__":
+    main()
