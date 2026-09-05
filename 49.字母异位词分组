@@ -1,0 +1,60 @@
+"""
+【字母异位词分组 - 哈希表 + 排序】
+
+思路（简洁）：
+遍历每个字符串，将其排序后的字符串作为键，将原字符串存入哈希表对应的列表中。
+最后返回所有列表的集合。
+
+易错点：
+1. 需使用 defaultdict(list) 自动初始化列表。
+2. 排序后的字符串作为键，确保同一组异位词拥有相同键。
+3. 输入可能为空列表，应返回空列表。
+
+时空复杂度：
+- 时间复杂度 O(n * k * log k)，n 为字符串数量，k 为最长字符串长度
+- 空间复杂度 O(n * k)
+
+输入输出示例：
+示例 1：
+输入: ["eat","tea","tan","ate","nat","bat"]
+输出: [["bat"],["nat","tan"],["ate","eat","tea"]]
+
+示例 2：
+输入: [""]
+输出: [[""]]
+
+示例 3：
+输入: ["a"]
+输出: [["a"]]
+"""
+
+import sys
+import json
+from typing import List
+from collections import defaultdict
+
+class Solution:
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        mp = defaultdict(list)
+        for st in strs:
+            key = ''.join(sorted(st))
+            mp[key].append(st)
+        return list(mp.values())
+
+def main():
+    # 读取输入，可能是一行 JSON 数组，如 ["eat","tea","tan","ate","nat","bat"]
+    data = sys.stdin.read().strip()
+    if not data:
+        return
+    try:
+        strs = json.loads(data)
+    except:
+        # 如果解析失败（例如输入是空格分隔的字符串），用 split()
+        strs = data.split()
+    sol = Solution()
+    result = sol.groupAnagrams(strs)
+    # 输出 JSON 格式，保证双引号
+    print(json.dumps(result))
+
+if __name__ == "__main__":
+    main()
