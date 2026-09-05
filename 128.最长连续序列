@@ -1,0 +1,62 @@
+"""
+【最长连续序列 - 哈希集合】
+
+思路（简洁）：
+将所有数字存入集合，遍历每个数字 x，若 x-1 不存在（说明 x 是连续序列的起点），
+则不断查找 x+1 存在，统计当前序列长度，更新答案。
+
+易错点：
+1. 必须去重，使用 set 实现。
+2. 只从序列起点开始统计，避免重复计数，保证 O(n) 时间复杂度。
+3. 遍历时修改 x 不影响 set 迭代。
+
+时空复杂度：
+- 时间 O(n)，每个元素最多被访问两次（作为起点和后续查找）
+- 空间 O(n)
+
+输入输出示例：
+示例 1：
+输入: [100,4,200,1,3,2]
+输出: 4
+
+示例 2：
+输入: [0,3,7,2,5,8,4,6,0,1]
+输出: 9
+
+示例 3：
+输入: []
+输出: 0
+"""
+
+import sys
+import json
+from typing import List
+
+class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        st = set(nums)
+        ans = 0
+        for x in st:
+            if x - 1 in st:   # 不是起点，跳过
+                continue
+            cur = 1
+            while x + 1 in st:
+                cur += 1
+                x += 1
+            ans = max(ans, cur)
+        return ans
+
+def main():
+    data = sys.stdin.read().strip()
+    if not data:
+        return
+    try:
+        nums = json.loads(data)
+    except:
+        # 兼容空格分隔的数字
+        nums = list(map(int, data.split()))
+    sol = Solution()
+    print(sol.longestConsecutive(nums))
+
+if __name__ == "__main__":
+    main()
