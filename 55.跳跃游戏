@@ -1,0 +1,56 @@
+"""
+【跳跃游戏 - 贪心】
+
+思路（简洁）：
+维护当前能到达的最远位置 mx。遍历数组，若当前位置 i > mx，说明无法到达，返回 False；
+否则更新 mx = max(mx, i + nums[i])。若能遍历完所有位置，返回 True。
+
+易错点：
+1. 当 i > mx 时说明前面能到达的最远位置不足以到达当前位置，立即返回 False。
+2. mx 初始为 0，因为从下标 0 开始。
+3. 不需要考虑 nums 为空的情况（题目保证非空）。
+
+时空复杂度：
+- 时间复杂度 O(n)，一次遍历
+- 空间复杂度 O(1)
+
+输入输出示例：
+示例 1：
+输入: [2,3,1,1,4]
+输出: true
+
+示例 2：
+输入: [3,2,1,0,4]
+输出: false
+
+示例 3：
+输入: [0]
+输出: true
+"""
+
+import sys
+import json
+from typing import List
+
+class Solution:
+    def canJump(self, nums: List[int]) -> bool:
+        mx = 0
+        for i, jump in enumerate(nums):
+            if i > mx:      # 无法到达 i
+                return False
+            mx = max(mx, i + jump)  # 更新最远可达位置
+        return True
+
+def main():
+    data = sys.stdin.read().strip()
+    if not data:
+        return
+    try:
+        nums = json.loads(data)
+    except:
+        nums = list(map(int, data.split()))
+    sol = Solution()
+    print("true" if sol.canJump(nums) else "false")
+
+if __name__ == "__main__":
+    main()
